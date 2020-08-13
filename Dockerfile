@@ -8,6 +8,7 @@ RUN apk update && apk --no-cache add \
     echo ${TZ} > /etc/timezone
 
 RUN curl -L -o /tmp/go.sh https://install.direct/go.sh
+RUN mkdir -p /usr/bin/v2ray
 RUN chmod +x /tmp/go.sh
 RUN /tmp/go.sh
 
