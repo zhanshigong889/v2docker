@@ -8,8 +8,8 @@ RUN apk update && apk --no-cache add \
     echo ${TZ} > /etc/timezone
 
 RUN mkdir /tmp/v2ray && cd /tmp/v2ray && \
-    curl -L -s https://raw.githubusercontent.com/ColetteContreras/v2ray-poseidon/master/install-release.sh | LOCAL_INSTALL=1 LOCAL=/v2ray-linux-64.zip bash && \
-	ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone && rm -rf /tmp/v2ray /v2ray-linux-64.zip
+    curl -L -s https://raw.githubusercontent.com/ColetteContreras/v2ray-poseidon/master/install-release.sh | LOCAL_INSTALL=2 bash && \
+    ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone && rm -rf /tmp/v2ray /v2ray-linux-64.zip
 
 COPY entrypoint-Poseidon.sh /entrypoint-Poseidon.sh
 RUN chmod +x /entrypoint-Poseidon.sh
