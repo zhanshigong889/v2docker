@@ -7,10 +7,9 @@ RUN apk update && apk --no-cache add \
     cp -r -f /usr/share/zoneinfo/${TZ} /etc/localtime && \
     echo ${TZ} > /etc/timezone
 
-RUN curl -L -o /tmp/go.sh https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh
-RUN mkdir -p /usr/bin/v2ray
-RUN chmod +x /tmp/go.sh
-RUN /tmp/go.sh
+# RUN curl -L -o /tmp/go.sh https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh
+RUN curl -L https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
+RUN unzip -d /usr/bin/ v2ray-linux-64.zip
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
