@@ -9,7 +9,8 @@ RUN apk update && apk --no-cache add \
 
 # RUN curl -L -o /tmp/go.sh https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh
 RUN curl -L https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
-RUN unzip -d /usr/bin/ v2ray-linux-64.zip
+RUN unzip v2ray-linux-64.zip
+RUN mv ./* /usr/bin/
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
