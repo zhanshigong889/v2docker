@@ -8,9 +8,8 @@ RUN apk update && apk --no-cache add \
     echo ${TZ} > /etc/timezone
 
 # RUN curl -L -o /tmp/go.sh https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh
-RUN curl -L https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
-RUN unzip v2ray-linux-64.zip
-RUN mv ./* /usr/bin/
+RUN curl -L -o /v2ray-linux-64.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
+RUN unzip -d /usr/bin/ /v2ray-linux-64.zip
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
