@@ -7,8 +7,8 @@ RUN apk update && apk --no-cache add \
     cp -r -f /usr/share/zoneinfo/${TZ} /etc/localtime && \
     echo ${TZ} > /etc/timezone
 
-COPY entrypoint-Poseidon.sh /entrypoint-Poseidon.sh
-RUN chmod +x /entrypoint-Poseidon.sh pos
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh pos
 
 ENV IN_DOCKER=true
-ENTRYPOINT ["/entrypoint-Poseidon.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
