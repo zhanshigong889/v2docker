@@ -132,7 +132,7 @@ EOF
     echo "额外ID (Alter Id) = 233"
     echo "传输协议 (Network) = tcp"
     echo "伪装类型 (header type) = none"
-    echo -e "://$(cat /tmp/vmess_qr.json | base64 | xargs | sed 's/\s\+//g')"
+    echo -e "://$(cat /tmp/qr.json | base64 | xargs | sed 's/\s\+//g')"
     echo "---------- END -------------"
     echo
 }
