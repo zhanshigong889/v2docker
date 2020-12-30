@@ -14,6 +14,13 @@ get_ip() {
 }
 
 get_envs() {
+    [[ -z $PROTOCOL ]]   && PROTOCOL=`echo dm1lc3M= | base64 -d`
+    [[ -z $PORT ]]       && PORT=8000
+    [[ -z $BURST ]]      && BURST=100kb
+    [[ -z $LATENCY ]]    && LATENCY=50ms
+    [[ -z $INTERVAL ]]   && INTERVAL=60
+    [[ -z $LIMIT_PORT ]] && LIMIT_PORT=$PORT
+
     [[ -z $NODEID ]] && NODEID=1
     [[ -z $WEBAPI ]] && WEBAPI=https://example.com/
     [[ -z $CHECK ]]  && CHECK=60
@@ -30,13 +37,6 @@ install_ray() {
     mkdir /var/v2dir
     unzip -d /var/v2dir/ /v2r.zip
     mv /var/v2dir/v2r* /var/v2dir/v2bin
-
-    PROTOCOL=`echo dm1lc3M= | base64 -d`
-    LIMIT_PORT=$PORT
-    BURST=100kb
-    LATENCY=50ms
-    INTERVAL=60
-    sleep 2
 
     iptables -F
     iptables -A INPUT -p tcp -m state --state NEW --dport $LIMIT_PORT -m connlimit --connlimit-above $LIMIT_CONN -j DROP
