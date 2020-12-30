@@ -11,4 +11,4 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENV PATH /usr/bin/v2ray:$PATH
-ENTRYPOINT ["/entrypoint.sh", "ray"]
+ENTRYPOINT ["/entrypoint.sh"]
