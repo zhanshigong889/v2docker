@@ -108,22 +108,6 @@ install_ray() {
 }
 TEMPEOF
 
-    cat >/tmp/qr.json <<-EOF
-{
-    "v": "2",
-    "ps": "${REMARKS}",
-    "add": "${ip}",
-    "port": "${PORT}",
-    "id": "${ID}",
-    "aid": "${ALTER}",
-    "net": "ws",
-    "type": "none",
-    "host": "",
-    "path": "",
-    "tls": ""
-}
-EOF
-
     echo
     echo "---------- V2 配置信息 -------------"
     echo "地址 (Address) = ${ip}"
@@ -132,7 +116,6 @@ EOF
     echo "额外ID (Alter Id) = 233"
     echo "传输协议 (Network) = tcp"
     echo "伪装类型 (header type) = none"
-    echo -e "://$(cat /tmp/qr.json | base64 | xargs | sed 's/\s\+//g')"
     echo "---------- END -------------"
     echo
 }
