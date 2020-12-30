@@ -18,6 +18,7 @@ get_envs() {
     [[ -z $UUID ]]       && UUID=00000000-0000-0000-0000-000000000000
     [[ -z $PORT ]]       && PORT=8000
     [[ -z $ALTER ]]      && ALTER=3
+    [[ -z $NETWORK ]]    && NETWORK=ws
     [[ -z $BURST ]]      && BURST=100kb
     [[ -z $LATENCY ]]    && LATENCY=50ms
     [[ -z $INTERVAL ]]   && INTERVAL=60
@@ -46,10 +47,10 @@ install_ray() {
     # watch -n $INTERVAL tc -s qdisc ls dev eth0
 
     config1='ewoibG9nIjp7CiJhY2Nlc3MiOiIvZGV2L3N0ZG91dCIsCiJlcnJvciI6Ii9kZXYvc3Rkb3V0IiwKImxvZ2xldmVsIjoid2FybmluZyIKfSwKImluYm91bmQiOnsKInBvcnQiOiR7UE9SVH0sCiJwcm90b2NvbCI6IiR7UFJPVE9DT0x9IiwKInNldHRpbmdzIjp7CiJ1ZHAiOnRydWUsCiJjbGllbnRzIjpbewoiaWQiOiIke1VVSUR9Ii'
-    config2='wKImFsdGVySWQiOiR7QUxURVJ9Cn1dCn0sCiJzdHJlYW1TZXR0aW5ncyI6ewoibmV0d29yayI6IndzIgp9Cn0sCiJvdXRib3VuZCI6ewoicHJvdG9jb2wiOiJmcmVlZG9tIiwKInNldHRpbmdzIjp7fQp9LAoib3V0Ym91bmREZXRvdXIiOlsKewoicHJvdG9jb2wiOiJibGFja2hvbGUiLAoic2V0dGluZ3MiOnt9LAoidGFnIjoiYmxv'
-    config3='Y2tlZCIKfQpdLAoicm91dGluZyI6ewoic3RyYXRlZ3kiOiJydWxlcyIsCiJzZXR0aW5ncyI6ewoicnVsZXMiOlt7CiJ0eXBlIjoiZmllbGQiLAoiaXAiOlsKIjAuMC4wLjAvOCIsCiIxMC4wLjAuMC84IiwKIjEwMC42NC4wLjAvMTAiLAoiMTI3LjAuMC4wLzgiLAoiMTY5LjI1NC4wLjAvMTYiLAoiMTcyLjE2LjAuMC8xMiIsCiIxOT'
-    config4='IuMC4wLjAvMjQiLAoiMTkyLjAuMi4wLzI0IiwKIjE5Mi4xNjguMC4wLzE2IiwKIjE5OC4xOC4wLjAvMTUiLAoiMTk4LjUxLjEwMC4wLzI0IiwKIjIwMy4wLjExMy4wLzI0IiwKIjo6MS8xMjgiLAoiZmMwMDo6LzciLAoiZmU4MDo6LzEwIgpdLAoib3V0Ym91bmRUYWciOiJibG9ja2VkIgp9XQp9Cn0KfQ=='
-    echo $config1$config2$config3$config4 | base64 -d | sed "s/\${PORT}/${PORT}/g" | sed "s/\${PROTOCOL}/${PROTOCOL}/g" | sed "s/\${UUID}/${UUID}/g" | sed "s/\${ALTER}/${ALTER}/g" > /var/v2dir/config.json
+    config2='wKImFsdGVySWQiOiR7QUxURVJ9Cn1dCn0sCiJzdHJlYW1TZXR0aW5ncyI6ewoibmV0d29yayI6IiR7TkVUV09SS30iCn0KfSwKIm91dGJvdW5kIjp7CiJwcm90b2NvbCI6ImZyZWVkb20iLAoic2V0dGluZ3MiOnt9Cn0sCiJvdXRib3VuZERldG91ciI6Wwp7CiJwcm90b2NvbCI6ImJsYWNraG9sZSIsCiJzZXR0aW5ncyI6e30sCiJ0'
+    config3='YWciOiJibG9ja2VkIgp9Cl0sCiJyb3V0aW5nIjp7CiJzdHJhdGVneSI6InJ1bGVzIiwKInNldHRpbmdzIjp7CiJydWxlcyI6W3sKInR5cGUiOiJmaWVsZCIsCiJpcCI6WwoiMC4wLjAuMC84IiwKIjEwLjAuMC4wLzgiLAoiMTAwLjY0LjAuMC8xMCIsCiIxMjcuMC4wLjAvOCIsCiIxNjkuMjU0LjAuMC8xNiIsCiIxNzIuMTYuMC4wLz'
+    config4='EyIiwKIjE5Mi4wLjAuMC8yNCIsCiIxOTIuMC4yLjAvMjQiLAoiMTkyLjE2OC4wLjAvMTYiLAoiMTk4LjE4LjAuMC8xNSIsCiIxOTguNTEuMTAwLjAvMjQiLAoiMjAzLjAuMTEzLjAvMjQiLAoiOjoxLzEyOCIsCiJmYzAwOjovNyIsCiJmZTgwOjovMTAiCl0sCiJvdXRib3VuZFRhZyI6ImJsb2NrZWQiCn1dCn0KfQp9'
+    echo $config1$config2$config3$config4 | base64 -d | sed "s/\${PORT}/${PORT}/g" | sed "s/\${PROTOCOL}/${PROTOCOL}/g" | sed "s/\${UUID}/${UUID}/g" | sed "s/\${ALTER}/${ALTER}/g"  | sed "s/\${NETWORK}/${NETWORK}/g" > /var/v2dir/config.json
 
     cat >/tmp/qr.json <<-EOF
 {
@@ -59,7 +60,7 @@ install_ray() {
     "port": "${PORT}",
     "id": "${ID}",
     "aid": "${ALTER}",
-    "net": "ws",
+    " ": "ws",
     "type": "none",
     "host": "",
     "path": "",
