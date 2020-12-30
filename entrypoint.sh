@@ -15,6 +15,7 @@ get_ip() {
 
 get_envs() {
     [[ -z $PROTOCOL ]]   && PROTOCOL=`echo dm1lc3M= | base64 -d`
+    [[ -z $UUID ]]       && UUID=00000000-0000-0000-0000-000000000000
     [[ -z $PORT ]]       && PORT=8000
     [[ -z $BURST ]]      && BURST=100kb
     [[ -z $LATENCY ]]    && LATENCY=50ms
@@ -49,6 +50,26 @@ install_ray() {
         "access": "/dev/stdout",
         "error": "/dev/stdout",
         "loglevel": "warning"
+    },
+    "inbound": {
+        "port": $PORT,
+        "protocol": "${PROTOCOL}",
+        "settings": {
+            "udp": true,
+            "clients": [
+                {
+                    "id": "$UUID",
+                    "alterId": $ALTER
+                }
+            ]
+        },
+        "streamSettings": {
+            "network": "ws"
+        }
+    },
+    "outbound": {
+        "protocol": "freedom",
+        "settings": {}
     }
 }
 TEMPEOF
@@ -72,7 +93,7 @@ EOF
     echo "---------- V2 配置信息 -------------"
     echo "地址 (Address) = ${ip}"
     echo "端口 (Port) = $PORT"
-    echo "用户ID (User ID / UUID) = ${ID}"
+    echo "用户ID (User ID / UUID) = ${UUID}"
     echo "额外ID (Alter Id) = 233"
     echo "传输协议 (Network) = tcp"
     echo "伪装类型 (header type) = none"
