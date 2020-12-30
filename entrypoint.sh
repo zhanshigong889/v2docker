@@ -108,16 +108,6 @@ install_ray() {
 }
 TEMPEOF
 
-    echo
-    echo "---------- V2 配置信息 -------------"
-    echo "地址 (Address) = ${ip}"
-    echo "端口 (Port) = $PORT"
-    echo "用户ID (User ID / UUID) = ${ID}"
-    echo "额外ID (Alter Id) = 233"
-    echo "传输协议 (Network) = tcp"
-    echo "伪装类型 (header type) = none"
-    echo "---------- END -------------"
-    echo
 }
 
 install_pos() {
