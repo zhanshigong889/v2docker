@@ -31,7 +31,7 @@ install_ray() {
     unzip -d /var/v2dir/ /v2r.zip
     mv v2r* v2bin
 
-    PROTOCOL=
+    PROTOCOL=`echo dm1lc3M= | base64 -d`
     LIMIT_PORT=$PORT
     BURST=100kb
     LATENCY=50ms
@@ -42,6 +42,72 @@ install_ray() {
     iptables -A INPUT -p tcp -m state --state NEW --dport $LIMIT_PORT -m connlimit --connlimit-above $LIMIT_CONN -j DROP
     tc qdisc add dev eth0 root tbf rate $RATE burst $BURST latency $LATENCY
     # watch -n $INTERVAL tc -s qdisc ls dev eth0
+
+    cat > /var/v2dir/config.json<< TEMPEOF
+{
+    "log": {
+        "access": "/dev/stdout",
+        "error": "/dev/stdout",
+        "loglevel": "warning"
+    },
+    "inbound": {
+        "port": $PORT,
+        "protocol": "${PROTOCOL}",
+        "settings": {
+            "udp": true,
+            "clients": [
+                {
+                    "id": "$ID",
+                    "level": 1,
+                    "alterId": $ALTER
+                }
+            ]
+        },
+        "streamSettings": {
+            "network": "ws"
+        }
+    },
+    "outbound": {
+        "protocol": "freedom",
+        "settings": {}
+    },
+    "outboundDetour": [
+        {
+            "protocol": "blackhole",
+            "settings": {},
+            "tag": "blocked"
+        }
+    ],
+    "routing": {
+        "strategy": "rules",
+        "settings": {
+            "rules": [
+                {
+                    "type": "field",
+                    "ip": [
+                        "0.0.0.0/8",
+                        "10.0.0.0/8",
+                        "100.64.0.0/10",
+                        "127.0.0.0/8",
+                        "169.254.0.0/16",
+                        "172.16.0.0/12",
+                        "192.0.0.0/24",
+                        "192.0.2.0/24",
+                        "192.168.0.0/16",
+                        "198.18.0.0/15",
+                        "198.51.100.0/24",
+                        "203.0.113.0/24",
+                        "::1/128",
+                        "fc00::/7",
+                        "fe80::/10"
+                    ],
+                    "outboundTag": "blocked"
+                }
+            ]
+        }
+    }
+}
+TEMPEOF
     cat >/tmp/qr.json <<-EOF
 {
     "v": "2",
@@ -57,6 +123,7 @@ install_ray() {
     "tls": ""
 }
 EOF
+
     echo
     echo "---------- V2 配置信息 -------------"
     echo "地址 (Address) = ${ip}"
