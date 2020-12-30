@@ -154,7 +154,7 @@ install_pos() {
 	"nodeId": $NODEID,          // 你的节点 ID 和 v2board 里的一致
 	"checkRate": $CHECK,        // 每隔多长时间同步一次配置文件、用户、上报服务器信息
 	"webapi": "$WEBAPI",        // v2board 的域名信息
-	"token": "$TOKEN",          // v2board 和 v2ray-poseidon 的通信密钥
+	"token": "$TOKEN",          // v2board 和 poseidon 的通信密钥
 	"speedLimit": $NODE_SPEED,  // 节点限速 单位 字节/s 0 表示不限速
 	"user": {
 	  "maxOnlineIPCount": $USER_COUNT, // 用户同时在线 IP 数限制 0 表示不限制
