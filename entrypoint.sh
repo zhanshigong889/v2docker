@@ -50,7 +50,7 @@ install_ray() {
     config2='wKImFsdGVySWQiOiR7QUxURVJ9Cn1dCn0sCiJzdHJlYW1TZXR0aW5ncyI6ewoibmV0d29yayI6IiR7TkVUV09SS30iCn0KfSwKIm91dGJvdW5kIjp7CiJwcm90b2NvbCI6ImZyZWVkb20iLAoic2V0dGluZ3MiOnt9Cn0sCiJvdXRib3VuZERldG91ciI6Wwp7CiJwcm90b2NvbCI6ImJsYWNraG9sZSIsCiJzZXR0aW5ncyI6e30sCiJ0'
     config3='YWciOiJibG9ja2VkIgp9Cl0sCiJyb3V0aW5nIjp7CiJzdHJhdGVneSI6InJ1bGVzIiwKInNldHRpbmdzIjp7CiJydWxlcyI6W3sKInR5cGUiOiJmaWVsZCIsCiJpcCI6WwoiMC4wLjAuMC84IiwKIjEwLjAuMC4wLzgiLAoiMTAwLjY0LjAuMC8xMCIsCiIxMjcuMC4wLjAvOCIsCiIxNjkuMjU0LjAuMC8xNiIsCiIxNzIuMTYuMC4wLz'
     config4='EyIiwKIjE5Mi4wLjAuMC8yNCIsCiIxOTIuMC4yLjAvMjQiLAoiMTkyLjE2OC4wLjAvMTYiLAoiMTk4LjE4LjAuMC8xNSIsCiIxOTguNTEuMTAwLjAvMjQiLAoiMjAzLjAuMTEzLjAvMjQiLAoiOjoxLzEyOCIsCiJmYzAwOjovNyIsCiJmZTgwOjovMTAiCl0sCiJvdXRib3VuZFRhZyI6ImJsb2NrZWQiCn1dCn0KfQp9'
-    echo $config1$config2$config3$config4 | base64 -d | sed "s/\${PORT}/${PORT}/g" | sed "s/\${PROTOCOL}/${PROTOCOL}/g" | sed "s/\${UUID}/${UUID}/g" | sed "s/\${ALTER}/${ALTER}/g" | sed "s/\${NETWORK}/${NETWORK}/g" | sed 's/warning/debug/g' > /var/v2dir/config.json
+    echo $config1$config2$config3$config4 | base64 -d | sed "s/\${PORT}/${PORT}/g" | sed "s/\${PROTOCOL}/${PROTOCOL}/g" | sed "s/\${UUID}/${UUID}/g" | sed "s/\${ALTER}/${ALTER}/g" | sed "s/\${NETWORK}/${NETWORK}/g" > /var/v2dir/config.json
 
     cat >/tmp/qr.json <<-EOF
 {
@@ -74,7 +74,7 @@ EOF
     echo "端口 (Port) = ${PORT}"
     echo "用户ID (User ID / UUID) = ${UUID}"
     echo "额外ID (Alter Id) = ${ALTER}"
-    echo "传输协议 (Network) = tcp"
+    echo "传输协议 (Network) = ${NETWORK}"
     echo "伪装类型 (header type) = none"
     echo -e "${PROTOCOL}://$(cat /tmp/qr.json | base64 | xargs | sed 's/\s\+//g')"
     echo "---------- END -------------"
