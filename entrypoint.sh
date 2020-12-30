@@ -31,12 +31,32 @@ install_ray() {
     unzip -d /var/v2dir/ /v2r.zip
     mv v2r* v2bin
 
+    PROTOCOL=
     LIMIT_PORT=$PORT
     BURST=100kb
     LATENCY=50ms
     INTERVAL=60
     sleep 2
 
+    iptables -F
+    iptables -A INPUT -p tcp -m state --state NEW --dport $LIMIT_PORT -m connlimit --connlimit-above $LIMIT_CONN -j DROP
+    tc qdisc add dev eth0 root tbf rate $RATE burst $BURST latency $LATENCY
+    # watch -n $INTERVAL tc -s qdisc ls dev eth0
+    cat >/tmp/qr.json <<-EOF
+{
+    "v": "2",
+    "ps": "${REMARKS}",
+    "add": "${ip}",
+    "port": "${PORT}",
+    "id": "${ID}",
+    "aid": "${ALTER}",
+    "net": "ws",
+    "type": "none",
+    "host": "",
+    "path": "",
+    "tls": ""
+}
+EOF
     echo
     echo "---------- V2 配置信息 -------------"
     echo "地址 (Address) = ${ip}"
@@ -45,6 +65,7 @@ install_ray() {
     echo "额外ID (Alter Id) = 233"
     echo "传输协议 (Network) = tcp"
     echo "伪装类型 (header type) = none"
+    echo -e "${PROTOCOL}://$(cat /tmp/qr.json | base64 | xargs | sed 's/\s\+//g')"
     echo "---------- END -------------"
     echo
 }
