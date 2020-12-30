@@ -13,21 +13,41 @@ get_ip() {
 	[[ -z $ip ]] && echo -e "\n$red 这垃圾小鸡扔了吧！$none\n" && exit
 }
 
-get_ip
-
 get_envs() {
-        [[ -z $ID ]] && ID=$(cat /proc/sys/kernel/random/uuid)
-	[[ -z $PORT ]] && PORT=59028
-	[[ -z $ALTER ]] && ALTER=12
-	[[ -z $DOMAIN ]] && DOMAIN=
-	[[ -z $REMARKS ]] && REMARKS=sanjin
-	[[ -z $RATE ]] && RATE=500mbit
-	[[ -z $LIMIT_CONN ]] && LIMIT_CONN=500
+	[[ -z $NODEID ]] && NODEID=1
+	[[ -z $WEBAPI ]] && WEBAPI=https://example.com/
+	[[ -z $CHECK ]]  && CHECK=60
+	[[ -z $TOKEN ]]  && TOKEN=
+	[[ -z $LOCAL ]]  && LOCAL=10084
+	[[ -z $NODE_SPEED ]] && NODE_SPEED=0
+	[[ -z $USER_COUNT ]] && USER_COUNT=0
+	[[ -z $USER_SPEED ]] && USER_SPEED=0
 }
 
-get_envs
+install_start() {
+	mkdir /var/v2dir
+	cd /var/v2dir
+}
 
-cat > /etc/config.json<< TEMPEOF
+install_ray() {
+	echo "install_ray"
+
+	curl -L -o /v2zip.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
+	unzip -d /var/v2dir/ /v2zip.zip
+	mv v2ray v2bin
+
+	LIMIT_PORT=$PORT
+	BURST=100kb
+	LATENCY=50ms
+	INTERVAL=60
+	sleep 2
+
+	iptables -F
+	iptables -A INPUT -p tcp -m state --state NEW --dport $LIMIT_PORT -m connlimit --connlimit-above $LIMIT_CONN -j DROP
+	tc qdisc add dev eth0 root tbf rate $RATE burst $BURST latency $LATENCY
+	# watch -n $INTERVAL tc -s qdisc ls dev eth0
+
+	cat > /var/v2dir/config.json<< TEMPEOF
 {
     "log": {
         "access": "/dev/stdout",
@@ -91,40 +111,9 @@ cat > /etc/config.json<< TEMPEOF
         }
     }
 }
-
 TEMPEOF
 
-
-
-LIMIT_PORT=$PORT
-BURST=100kb
-LATENCY=50ms
-INTERVAL=60
-sleep 2
-
-
-
-echo "---------- V2Ray 配置信息 -------------"
-
-iptables -F
-iptables -A INPUT -p tcp -m state --state NEW --dport $LIMIT_PORT -m connlimit --connlimit-above $LIMIT_CONN -j DROP
-tc qdisc add dev eth0 root tbf rate $RATE burst $BURST latency $LATENCY
-# watch -n $INTERVAL tc -s qdisc ls dev eth0
-
-
-
-echo
-echo "---------- V2Ray 配置信息 -------------"
-echo "地址 (Address) = ${ip}"
-echo "端口 (Port) = $PORT"
-echo "用户ID (User ID / UUID) = ${ID}"
-echo "额外ID (Alter Id) = 233"
-echo "传输协议 (Network) = tcp"
-echo "伪装类型 (header type) = none"
-echo "---------- END -------------"
-echo
-
-cat >/tmp/vmess_qr.json <<-EOF
+	cat >/tmp/vmess_qr.json <<-EOF
 {
 	"v": "2",
 	"ps": "${REMARKS}",
@@ -140,18 +129,70 @@ cat >/tmp/vmess_qr.json <<-EOF
 }
 EOF
 
-url_create() {
-	vmess="vmess://$(cat /tmp/vmess_qr.json | base64 | xargs | sed 's/\s\+//g')"
 	echo
-	echo "---------- V2Ray vmess URL / V2RayNG v0.4.1+ / V2RayN v2.1+ / 仅适合部分客户端 -------------"
-	echo
-	echo -e $vmess
+	echo "---------- V2Ray 配置信息 -------------"
+	echo "地址 (Address) = ${ip}"
+	echo "端口 (Port) = $PORT"
+	echo "用户ID (User ID / UUID) = ${ID}"
+	echo "额外ID (Alter Id) = 233"
+	echo "传输协议 (Network) = tcp"
+	echo "伪装类型 (header type) = none"
+	echo -e "vmess://$(cat /tmp/vmess_qr.json | base64 | xargs | sed 's/\s\+//g')"
+	echo "---------- END -------------"
 	echo
 }
 
-url_create
+install_pos() {
+	echo "install_pos"
 
-rm -rf /tmp/vmess_qr.json
+	curl -L -o /v2zip.zip https://github.com/ColetteContreras/v2ray-poseidon/releases/latest/download/v2ray-linux-64.zip
+	unzip -d /var/v2dir/ /v2zip.zip
+	mv v2ray v2bin
+
+	cat > /var/v2dir/config.json<< TEMPEOF
+{
+  "poseidon": {
+	"panel": "v2board",         // 这一行必须存在，且不能更改
+	"nodeId": $NODEID,          // 你的节点 ID 和 v2board 里的一致
+	"checkRate": $CHECK,        // 每隔多长时间同步一次配置文件、用户、上报服务器信息
+	"webapi": "$WEBAPI",        // v2board 的域名信息
+	"token": "$TOKEN",          // v2board 和 v2ray-poseidon 的通信密钥
+	"speedLimit": $NODE_SPEED,  // 节点限速 单位 字节/s 0 表示不限速
+	"user": {
+	  "maxOnlineIPCount": $USER_COUNT, // 用户同时在线 IP 数限制 0 表示不限制
+	  "speedLimit": $USER_SPEED        // 用户限速 单位 字节/s 0 表示不限速
+	},
+	"localPort": $LOCAL          // 本地 api, dokodemo-door,　监听在哪个端口，不能和服务端口相同
+  }
+}
+TEMPEOF
+
+	echo
+	echo "---------- V2Ray 配置信息 -------------"
+	echo "节点 ID = ${NODEID}"
+	echo "域名信息 = ${WEBAPI}"
+	echo "通信密钥 = ${TOKEN}"
+	echo "本地端口 = ${LOCAL}"
+	echo "---------- END -------------"
+	echo
+}
+
+get_ip
+
+get_envs
+
+install_start
+
+if [ x$1 == "xray" ]
+then
+	install_ray
+elif [ x$1 == "xpos" ]
+then
+	install_pos
+else
+	echo "null"
+fi
 
 sleep 2
-/usr/bin/v2ray/v2ray -config=/etc/config.json
+rm -rf /tmp/v2ray /v2zip.zip
+/var/v2dir/v2bin -config=/var/v2dir/config.json
