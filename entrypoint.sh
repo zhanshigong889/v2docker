@@ -183,14 +183,14 @@ get_envs
 
 install_start
 
-if [ x$1 == "xray" ]
+if [ x${BIN_TYPE} == "xray" ]
 then
 	install_ray
-elif [ x$1 == "xpos" ]
+elif [ x${BIN_TYPE} == "xpos" ]
 then
 	install_pos
 else
-	echo "null"
+	echo "unknow ${BIN_TYPE}"
 fi
 
 sleep 2
