@@ -46,6 +46,24 @@ install_pos() {
     unzip -d /var/v2dir/ /v2p.zip
     mv v2r* v2bin
 
+    cat > /var/v2dir/config.json<< TEMPEOF
+{
+  "poseidon": {
+    "panel": "v2board",         // 这一行必须存在，且不能更改
+    "nodeId": $NODEID,          // 你的节点 ID 和 v2board 里的一致
+    "checkRate": $CHECK,        // 每隔多长时间同步一次配置文件、用户、上报服务器信息
+    "webapi": "$WEBAPI",        // v2board 的域名信息
+    "token": "$TOKEN",          // v2board 和 poseidon 的通信密钥
+    "speedLimit": $NODE_SPEED,  // 节点限速 单位 字节/s 0 表示不限速
+    "user": {
+      "maxOnlineIPCount": $USER_COUNT, // 用户同时在线 IP 数限制 0 表示不限制
+      "speedLimit": $USER_SPEED        // 用户限速 单位 字节/s 0 表示不限速
+    },
+    "localPort": $LOCAL          // 本地 api, dokodemo-door,　监听在哪个端口，不能和服务端口相同
+  }
+}
+TEMPEOF
+
     echo
     echo "---------- V2 配置信息 -------------"
     echo "节点 ID = ${NODEID}"
