@@ -51,7 +51,7 @@ install_ray() {
     },
     "inbound": {
         "port": $PORT,
-        "protocol": "vmess",
+        "protocol": "",
         "settings": {
             "udp": true,
             "clients": [
