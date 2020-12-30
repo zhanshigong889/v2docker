@@ -29,7 +29,7 @@ install_ray() {
 
     mkdir /var/v2dir
     unzip -d /var/v2dir/ /v2r.zip
-    mv v2r* v2bin
+    mv /var/v2dir/v2r* /var/v2dir/v2bin
 
     PROTOCOL=`echo dm1lc3M= | base64 -d`
     LIMIT_PORT=$PORT
@@ -45,6 +45,11 @@ install_ray() {
 
     cat > /var/v2dir/config.json<< TEMPEOF
 {
+    "log": {
+        "access": "/dev/stdout",
+        "error": "/dev/stdout",
+        "loglevel": "warning"
+    }
 }
 TEMPEOF
     cat >/tmp/qr.json <<-EOF
@@ -81,7 +86,7 @@ install_pos() {
 
     mkdir /var/v2dir
     unzip -d /var/v2dir/ /v2p.zip
-    mv v2r* v2bin
+    mv /var/v2dir/v2r* /var/v2dir/v2bin
 
     cat > /var/v2dir/config.json<< TEMPEOF
 {
@@ -114,7 +119,6 @@ TEMPEOF
 get_ip
 
 get_envs
-
 
 echo "正在启动 ${BIN_TYPE}"
 if [ x${BIN_TYPE} == "xray" ]
