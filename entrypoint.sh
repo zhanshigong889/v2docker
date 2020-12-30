@@ -27,40 +27,16 @@ get_envs() {
 install_ray() {
     echo "install_ray"
 
-    mkdir /var/v2dir
-    unzip -d /var/v2dir/ /v2r.zip
-    mv v2r* v2bin
-
     LIMIT_PORT=$PORT
     BURST=100kb
     LATENCY=50ms
     INTERVAL=60
     sleep 2
 
-    iptables -F
-    iptables -A INPUT -p tcp -m state --state NEW --dport $LIMIT_PORT -m connlimit --connlimit-above $LIMIT_CONN -j DROP
-    tc qdisc add dev eth0 root tbf rate $RATE burst $BURST latency $LATENCY
-    # watch -n $INTERVAL tc -s qdisc ls dev eth0
-
-    echo
-    echo "---------- V2 配置信息 -------------"
-    echo "地址 (Address) = ${ip}"
-    echo "端口 (Port) = $PORT"
-    echo "用户ID (User ID / UUID) = ${ID}"
-    echo "额外ID (Alter Id) = 233"
-    echo "传输协议 (Network) = tcp"
-    echo "伪装类型 (header type) = none"
-    echo -e "vmess://$(cat /tmp/vmess_qr.json | base64 | xargs | sed 's/\s\+//g')"
-    echo "---------- END -------------"
-    echo
 }
 
 install_pos() {
     echo "install_pos"
-
-    mkdir /var/v2dir
-    unzip -d /var/v2dir/ /v2p.zip
-    mv v2r* v2bin
 
     echo
     echo "---------- V2 配置信息 -------------"
