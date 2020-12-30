@@ -43,6 +43,10 @@ install_ray() {
     tc qdisc add dev eth0 root tbf rate $RATE burst $BURST latency $LATENCY
     # watch -n $INTERVAL tc -s qdisc ls dev eth0
 
+    cat > /var/v2dir/config.json<< TEMPEOF
+{
+}
+TEMPEOF
     cat >/tmp/qr.json <<-EOF
 {
     "v": "2",
@@ -111,6 +115,8 @@ get_ip
 
 get_envs
 
+
+echo "正在启动 ${BIN_TYPE}"
 if [ x${BIN_TYPE} == "xray" ]
 then
     install_ray
@@ -118,7 +124,7 @@ elif [ x${BIN_TYPE} == "xpos" ]
 then
     install_pos
 else
-    echo "null"
+    echo "unknow"
 fi
 
 sleep 2
