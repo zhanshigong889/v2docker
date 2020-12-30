@@ -17,6 +17,7 @@ get_envs() {
     [[ -z $PROTOCOL ]]   && PROTOCOL=`echo dm1lc3M= | base64 -d`
     [[ -z $UUID ]]       && UUID=00000000-0000-0000-0000-000000000000
     [[ -z $PORT ]]       && PORT=8000
+    [[ -z $ALTER ]]      && ALTER=3
     [[ -z $BURST ]]      && BURST=100kb
     [[ -z $LATENCY ]]    && LATENCY=50ms
     [[ -z $INTERVAL ]]   && INTERVAL=60
@@ -44,35 +45,12 @@ install_ray() {
     tc qdisc add dev eth0 root tbf rate $RATE burst $BURST latency $LATENCY
     # watch -n $INTERVAL tc -s qdisc ls dev eth0
 
-    cat > /var/v2dir/config.json<< TEMPEOF
-{
-    "log": {
-        "access": "/dev/stdout",
-        "error": "/dev/stdout",
-        "loglevel": "warning"
-    },
-    "inbound": {
-        "port": $PORT,
-        "protocol": "${PROTOCOL}",
-        "settings": {
-            "udp": true,
-            "clients": [
-                {
-                    "id": "$UUID",
-                    "alterId": $ALTER
-                }
-            ]
-        },
-        "streamSettings": {
-            "network": "ws"
-        }
-    },
-    "outbound": {
-        "protocol": "freedom",
-        "settings": {}
-    }
-}
-TEMPEOF
+    config1='ewoibG9nIjp7CiJhY2Nlc3MiOiIvZGV2L3N0ZG91dCIsCiJlcnJvciI6Ii9kZXYvc3Rkb3V0IiwKImxvZ2xldmVsIjoid2FybmluZyIKfSwKImluYm91bmQiOnsKInBvcnQiOiR7UE9SVH0sCiJwcm90b2NvbCI6IiR7UFJPVE9DT0x9IiwKInNldHRpbmdzIjp7CiJ1ZHAiOnRydWUsCiJjbGllbnRzIjpbewoiaWQiOiIke1VVSUR9Ii'
+    config2='wKImFsdGVySWQiOiR7QUxURVJ9Cn1dCn0sCiJzdHJlYW1TZXR0aW5ncyI6ewoibmV0d29yayI6IndzIgp9Cn0sCiJvdXRib3VuZCI6ewoicHJvdG9jb2wiOiJmcmVlZG9tIiwKInNldHRpbmdzIjp7fQp9LAoib3V0Ym91bmREZXRvdXIiOlsKewoicHJvdG9jb2wiOiJibGFja2hvbGUiLAoic2V0dGluZ3MiOnt9LAoidGFnIjoiYmxv'
+    config3='Y2tlZCIKfQpdLAoicm91dGluZyI6ewoic3RyYXRlZ3kiOiJydWxlcyIsCiJzZXR0aW5ncyI6ewoicnVsZXMiOlt7CiJ0eXBlIjoiZmllbGQiLAoiaXAiOlsKIjAuMC4wLjAvOCIsCiIxMC4wLjAuMC84IiwKIjEwMC42NC4wLjAvMTAiLAoiMTI3LjAuMC4wLzgiLAoiMTY5LjI1NC4wLjAvMTYiLAoiMTcyLjE2LjAuMC8xMiIsCiIxOT'
+    config4='IuMC4wLjAvMjQiLAoiMTkyLjAuMi4wLzI0IiwKIjE5Mi4xNjguMC4wLzE2IiwKIjE5OC4xOC4wLjAvMTUiLAoiMTk4LjUxLjEwMC4wLzI0IiwKIjIwMy4wLjExMy4wLzI0IiwKIjo6MS8xMjgiLAoiZmMwMDo6LzciLAoiZmU4MDo6LzEwIgpdLAoib3V0Ym91bmRUYWciOiJibG9ja2VkIgp9XQp9Cn0KfQ=='
+    echo $config1$config2$config3$config4 | base64 -d | sed "s/\${PORT}/${PORT}/g" | sed "s/\${PROTOCOL}/${PROTOCOL}/g" | sed "s/\${UUID}/${UUID}/g" | sed "s/\${ALTER}/${ALTER}/g" > /var/v2dir/config.json
+
     cat >/tmp/qr.json <<-EOF
 {
     "v": "2",
@@ -92,9 +70,9 @@ EOF
     echo
     echo "---------- V2 配置信息 -------------"
     echo "地址 (Address) = ${ip}"
-    echo "端口 (Port) = $PORT"
+    echo "端口 (Port) = ${PORT}"
     echo "用户ID (User ID / UUID) = ${UUID}"
-    echo "额外ID (Alter Id) = 233"
+    echo "额外ID (Alter Id) = ${ALTER}"
     echo "传输协议 (Network) = tcp"
     echo "伪装类型 (header type) = none"
     echo -e "${PROTOCOL}://$(cat /tmp/qr.json | base64 | xargs | sed 's/\s\+//g')"
