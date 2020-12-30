@@ -8,7 +8,7 @@ RUN apk update && apk --no-cache add \
     echo ${TZ} > /etc/timezone
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh pos
+RUN chmod +x /entrypoint.sh
 
 ENV IN_DOCKER=true
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh", "pos"]
