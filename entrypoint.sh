@@ -37,77 +37,6 @@ install_ray() {
     INTERVAL=60
     sleep 2
 
-    iptables -F
-    iptables -A INPUT -p tcp -m state --state NEW --dport $LIMIT_PORT -m connlimit --connlimit-above $LIMIT_CONN -j DROP
-    tc qdisc add dev eth0 root tbf rate $RATE burst $BURST latency $LATENCY
-    # watch -n $INTERVAL tc -s qdisc ls dev eth0
-
-    cat > /var/v2dir/config.json<< TEMPEOF
-{
-    "log": {
-        "access": "/dev/stdout",
-        "error": "/dev/stdout",
-        "loglevel": "warning"
-    },
-    "inbound": {
-        "port": $PORT,
-        "protocol": "",
-        "settings": {
-            "udp": true,
-            "clients": [
-                {
-                    "id": "$ID",
-                    "level": 1,
-                    "alterId": $ALTER
-                }
-            ]
-        },
-        "streamSettings": {
-            "network": "ws"
-        }
-    },
-    "outbound": {
-        "protocol": "freedom",
-        "settings": {}
-    },
-    "outboundDetour": [
-        {
-            "protocol": "blackhole",
-            "settings": {},
-            "tag": "blocked"
-        }
-    ],
-    "routing": {
-        "strategy": "rules",
-        "settings": {
-            "rules": [
-                {
-                    "type": "field",
-                    "ip": [
-                        "0.0.0.0/8",
-                        "10.0.0.0/8",
-                        "100.64.0.0/10",
-                        "127.0.0.0/8",
-                        "169.254.0.0/16",
-                        "172.16.0.0/12",
-                        "192.0.0.0/24",
-                        "192.0.2.0/24",
-                        "192.168.0.0/16",
-                        "198.18.0.0/15",
-                        "198.51.100.0/24",
-                        "203.0.113.0/24",
-                        "::1/128",
-                        "fc00::/7",
-                        "fe80::/10"
-                    ],
-                    "outboundTag": "blocked"
-                }
-            ]
-        }
-    }
-}
-TEMPEOF
-
 }
 
 install_pos() {
@@ -116,24 +45,6 @@ install_pos() {
     mkdir /var/v2dir
     unzip -d /var/v2dir/ /v2p.zip
     mv v2r* v2bin
-
-    cat > /var/v2dir/config.json<< TEMPEOF
-{
-  "poseidon": {
-    "panel": "v2board",         // 这一行必须存在，且不能更改
-    "nodeId": $NODEID,          // 你的节点 ID 和 v2board 里的一致
-    "checkRate": $CHECK,        // 每隔多长时间同步一次配置文件、用户、上报服务器信息
-    "webapi": "$WEBAPI",        // v2board 的域名信息
-    "token": "$TOKEN",          // v2board 和 poseidon 的通信密钥
-    "speedLimit": $NODE_SPEED,  // 节点限速 单位 字节/s 0 表示不限速
-    "user": {
-      "maxOnlineIPCount": $USER_COUNT, // 用户同时在线 IP 数限制 0 表示不限制
-      "speedLimit": $USER_SPEED        // 用户限速 单位 字节/s 0 表示不限速
-    },
-    "localPort": $LOCAL          // 本地 api, dokodemo-door,　监听在哪个端口，不能和服务端口相同
-  }
-}
-TEMPEOF
 
     echo
     echo "---------- V2 配置信息 -------------"
