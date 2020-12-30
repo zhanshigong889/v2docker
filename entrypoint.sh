@@ -129,7 +129,7 @@ TEMPEOF
 EOF
 
 	echo
-	echo "---------- V2Ray 配置信息 -------------"
+	echo "---------- V2 配置信息 -------------"
 	echo "地址 (Address) = ${ip}"
 	echo "端口 (Port) = $PORT"
 	echo "用户ID (User ID / UUID) = ${ID}"
@@ -166,7 +166,7 @@ install_pos() {
 TEMPEOF
 
 	echo
-	echo "---------- V2Ray 配置信息 -------------"
+	echo "---------- V2 配置信息 -------------"
 	echo "节点 ID = ${NODEID}"
 	echo "域名信息 = ${WEBAPI}"
 	echo "通信密钥 = ${TOKEN}"
