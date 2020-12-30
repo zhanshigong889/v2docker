@@ -32,9 +32,8 @@ install_start() {
 install_ray() {
 	echo "install_ray"
 
-	curl -L -o /v2zip.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
-	unzip -d /var/v2dir/ /v2zip.zip
-	mv v2ray v2bin
+	unzip -d /var/v2dir/ /v2r.zip
+	mv v2r* v2bin
 
 	LIMIT_PORT=$PORT
 	BURST=100kb
@@ -145,9 +144,8 @@ EOF
 install_pos() {
 	echo "install_pos"
 
-	curl -L -o /v2zip.zip https://github.com/ColetteContreras/v2ray-poseidon/releases/latest/download/v2ray-linux-64.zip
-	unzip -d /var/v2dir/ /v2zip.zip
-	mv v2ray v2bin
+	unzip -d /var/v2dir/ /v2p.zip
+	mv v2r* v2bin
 
 	cat > /var/v2dir/config.json<< TEMPEOF
 {
